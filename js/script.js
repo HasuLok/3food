@@ -311,6 +311,56 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 2000);
 
     }
+    //Методы массивов 
+    //filter
+
+    // let names =['Ivan', 'Ann', 'Ksenia', 'Volandemort'];
+    // let shortNmaes = names.filter(function(name){
+    //     return name.length < 5;
+    // });
+    // console.log(shortNmaes);
+
+
+    //MAP 
+
+    // let answers=['IvAn', 'AnnA', 'Hello', ];
+    //  answers = answers.map((item) => {
+    //     return item.toLowerCase();
+    // });
+
+    // console.log(answers);
+
+    // EVERY/SOME 
+
+//     let some = [4, 5, 6];
+
+// // console.log(some.some(item =>  typeof(item) === 'number'));
+// console.log(some.every(item =>  typeof(item) === 'number'));
+
+
+    // REDUCE 
+
+    // let arr =['apple', 'pear', 'plum'];
+
+    // let res = arr.reduce((sum, current) => `${sum},  ${current}`, 3);
+    // console.log(res);
+
+    // let obj = {
+    //     ivan:'persone',
+    //     ann:'persone',
+    //     dog:'animal',
+    //     cat:'animal',
+    // };
+    // let newArr = Object.entries(obj)
+    // .filter(item => item[1] ==='persone')
+    // .map(item => item[0]);
+
+
+    // console.log(newArr);
+    fetch('http://localhost:3000/menu')
+        .then(data => data.json())
+        .then(res => console.log(res) );  
 
 }); 
 
+ 
