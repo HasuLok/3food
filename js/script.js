@@ -93,8 +93,7 @@ window.addEventListener('DOMContentLoaded', () => {
     //Modal
 
     let modalTrigger = document.querySelectorAll('[data-modal]'),
-        modal = document.querySelector('.modal'),
-        modalCLose = document.querySelector('[data-close]');
+        modal = document.querySelector('.modal');
 
     function openModal() {
         modal.classList.add('show');
@@ -113,12 +112,9 @@ window.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('show');
         document.body.style.overflow = '';
     }
-    
-    
-    modalCLose.addEventListener('click', closeModal);
-    
+      
     modal.addEventListener('click', (e) => {
-        if(e.target === modal) {
+        if(e.target === modal || e.target.getAttribute('data-close') == '') {
             closeModal ();
         }
     }); 
@@ -131,7 +127,7 @@ window.addEventListener('DOMContentLoaded', () => {
     
     //Modal modify
 
-    let modalTimer = setTimeout(openModal, 5000);
+    let modalTimer = setTimeout(openModal, 50000);
 
     function showModalOnScroll(){
         if(window.pageYOffset + document.documentElement.clientHeight >= 
@@ -218,6 +214,103 @@ window.addEventListener('DOMContentLoaded', () => {
         '.menu .container',
         'menu__item'
     ).render();
+    
+    //Forms
+
+    let forms = document.querySelectorAll('form');  
+
+    let message = {
+        loading: "img/form/054spinner.svg",     
+        success: "Спасибо! Скоро мы с вами свяжемся",
+        failure:"Что-то пошло не так..."
+    };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let statusMsg = document.createElement('img');
+            statusMsg.src = message.loading;
+            statusMsg.style.cssText =`
+                display:block;
+                margin: 0 auto; 
+            `;
+            
+            form.insertAdjacentElement('afterend', statusMsg);
+
+
+
+            
+            let formData = new FormData(form);
+
+            let object = {};
+            formData.forEach(function(value, key) {
+                object[key] = value;
+            });
+            
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'aplication/json'
+                },
+                body: JSON.stringify(object)
+
+            }).then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                
+                statusMsg.remove();
+            }).catch(() => {
+                showThanksModal(message.failure);
+            }).finally(() => {
+                form.reset();
+            });
+
+            // request.send(formData);
+
+            // request.addEventListener('load', () => {
+            //     if(request.status === 200){
+            //         console.log(request.response);
+            //         showThanksModal(message.success);
+            //         form.reset();
+            //         statusMsg.remove();
+                    
+            //     }else{
+            //         showThanksModal(message.failure);
+            //     }
+            // });
+        });
+    }
+
+    function showThanksModal (message) {
+        let prevModalDialog = document.querySelector('.modal__dialog');
+
+        prevModalDialog.classList.add('hide');
+        openModal();
+        
+        let thanksModal = document.createElement('div');
+        thanksModal.classList.add('.modal__dialog');
+        thanksModal.innerHTML =`
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+
+        document.querySelector('.modal').append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.add('show');
+            prevModalDialog.classList.remove('hide');
+            closeModal();
+        }, 2000);
+
+    }
 
 }); 
 
