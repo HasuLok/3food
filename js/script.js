@@ -193,7 +193,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         return await res.json();
     };
- 
+                            // Подключение через axio
     axios.get('http://localhost:3000/menu')
     .then(data => {
         data.data.forEach(({img, altimg, title, descr, price}) => {
@@ -280,7 +280,7 @@ window.addEventListener('DOMContentLoaded', () => {
     forms.forEach(item => {
         bindPostData(item);
     });
- 
+                                // fitch() 
     let postData = async (url, data) => {
         let res = await fetch(url, {
                 method: 'POST',
@@ -293,7 +293,7 @@ window.addEventListener('DOMContentLoaded', () => {
         return await res.json();
     };
 
-
+                        // Привязываем данные из форм к db.json 
     function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -323,7 +323,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }).finally(() => {
                 form.reset();
             });
-            //refactorin XMLRequest to fitch()
+                            // Рефакторинг     XMLRequest to fitch()
             // request.send(formData);
             // request.addEventListener('load', () => {
             //     if(request.status === 200){
@@ -412,6 +412,52 @@ window.addEventListener('DOMContentLoaded', () => {
         // fetch('http://localhost:3000/menu')
         //     .then(data => data.json())
         //     .then(res => console.log(res) );  
+
+
+
+                            //Слайдер 
+
+    let slides = document.querySelectorAll('.offer__slide'),
+        prev = document.querySelector('.offer__slider-prev'),
+        next = document.querySelector('.offer__slider-next'),
+        total =document.querySelector('#total'),
+        current =document.querySelector('#current'),
+        slideIndex = 1;
+
+    
+    showSlides(slideIndex);
+    
+    function showSlides (n) {
+        if (n > slides.length){
+            slideIndex =1;
+        }
+        if(n < 1) {
+            slideIndex = slides.length;
+        }
+        slides.forEach(item => item.style.display ='none');
+
+        slides[slideIndex - 1].style.display = 'block';
+
+        if(slides.length < 10){
+            current.textContent = `0${slideIndex}`;
+
+        }else {
+            current.textContent = slides.length;
+        }
+        
+
+        
+    }
+     
+    function plusSlides (n){
+        showSlides(slideIndex += n);
+    }
+    prev.addEventListener('click', () => {
+        plusSlides(-1);
+    });
+    next.addEventListener('click', () => {
+        plusSlides(1);
+    });
 
 }); 
 
