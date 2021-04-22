@@ -184,36 +184,88 @@ window.addEventListener('DOMContentLoaded', () => {
 
         }
     }
+                            // Функция получает по url данные data + показывает ошибку
+    let getResource = async (url, data) => {
+        let res = await fetch(url);   
+        if( !res.ok){
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
 
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        9,
-        '.menu .container',
-        'menu__item',
-        'big'
-    ).render();
+        return await res.json();
+    };
+ 
+    axios.get('http://localhost:3000/menu')
+    .then(data => {
+        data.data.forEach(({img, altimg, title, descr, price}) => {
+            new MenuCard(img, altimg, title, descr, price, '.menu .container' ).render();
+        });
+    });     
+         
+                            // Подключение карточек с сервера 
+    // getResource('http://localhost:3000/menu')
+    // .then(data => {
+    //     data.forEach(({img, altimg, title, descr, price}) => {
+    //         new MenuCard(img, altimg, title, descr, price, '.menu .container' ).render();
+    //     });
+    // });    
+                        // Отрисовка элементов из скрипта 
+            // getResource('http://localhost:3000/menu')
+            //     .then( data => createCard(data));
 
-    new MenuCard(
-        "img/tabs/elite.jpg",
-        "elite",
-        'Меню “Премиум”',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        18,
-        '.menu .container',
-        'menu__item'
-    ).render();
-    new MenuCard(
-        "img/tabs/post.jpg",
-        "post",
-        'Меню "Постное"',
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        19,
-        '.menu .container',
-        'menu__item'
-    ).render();
+            // function createCard(data) {
+            //     data.forEach(({img, altimg, title, descr, price}) => {
+            //         let element = document.createElement('div');
+            //         element.classList.add("menu__item");
+            //         element.innerHTML=`
+            //         <div class="menu__item">
+            //         <img src=${img} alt=${altimg}>
+            //         <h3 class="menu__item-subtitle">${title}</h3>
+            //         <div class="menu__item-descr">${descr}</div>
+            //         <div class="menu__item-divider"></div>
+            //         <div class="menu__item-price">
+            //             <div class="menu__item-cost">Цена:</div>
+            //             <div class="menu__item-total">
+            //             <span>${price}</span> грн/день</div>
+            //         </div>
+            //         </div>
+            //         `;
+            //         console.log('heloo');
+            //         document.querySelector('.menu .container').append(element);
+            //     });
+                
+            // }
+    
+    
+
+    // new MenuCard(
+    //     "img/tabs/vegy.jpg",
+    //     "vegy",
+    //     'Меню "Фитнес"',
+    //     'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+    //     9,
+    //     '.menu .container',
+    //     'menu__item',
+    //     'big'
+    // ).render();
+
+    // new MenuCard(
+    //     "img/tabs/elite.jpg",
+    //     "elite",
+    //     'Меню “Премиум”',
+    //     'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+    //     18,
+    //     '.menu .container',
+    //     'menu__item'
+    // ).render();
+    // new MenuCard(
+    //     "img/tabs/post.jpg",
+    //     "post",
+    //     'Меню "Постное"',
+    //     'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+    //     19,
+    //     '.menu .container',
+    //     'menu__item'
+    // ).render();
     
     //Forms
 
@@ -226,10 +278,23 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
+ 
+    let postData = async (url, data) => {
+        let res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: data
+        });
 
-    function postData(form) {
+        return await res.json();
+    };
+
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -241,38 +306,25 @@ window.addEventListener('DOMContentLoaded', () => {
             `;
             
             form.insertAdjacentElement('afterend', statusMsg);
-
-
-
-            
+           
             let formData = new FormData(form);
 
-            let object = {};
-            formData.forEach(function(value, key) {
-                object[key] = value;
-            });
-            
-            fetch('server.php', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'aplication/json'
-                },
-                body: JSON.stringify(object)
+            let json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            }).then(data => data.text())
-            .then(data => {
+                    
+
+            postData('http://localhost:3000/requests', json)
+              .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
-                
                 statusMsg.remove();
             }).catch(() => {
                 showThanksModal(message.failure);
             }).finally(() => {
                 form.reset();
             });
-
+            //refactorin XMLRequest to fitch()
             // request.send(formData);
-
             // request.addEventListener('load', () => {
             //     if(request.status === 200){
             //         console.log(request.response);
@@ -311,55 +363,55 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 2000);
 
     }
-    //Методы массивов 
-    //filter
+        //Методы массивов 
+        //filter
 
-    // let names =['Ivan', 'Ann', 'Ksenia', 'Volandemort'];
-    // let shortNmaes = names.filter(function(name){
-    //     return name.length < 5;
-    // });
-    // console.log(shortNmaes);
-
-
-    //MAP 
-
-    // let answers=['IvAn', 'AnnA', 'Hello', ];
-    //  answers = answers.map((item) => {
-    //     return item.toLowerCase();
-    // });
-
-    // console.log(answers);
-
-    // EVERY/SOME 
-
-//     let some = [4, 5, 6];
-
-// // console.log(some.some(item =>  typeof(item) === 'number'));
-// console.log(some.every(item =>  typeof(item) === 'number'));
+        // let names =['Ivan', 'Ann', 'Ksenia', 'Volandemort'];
+        // let shortNmaes = names.filter(function(name){
+        //     return name.length < 5;
+        // });
+        // console.log(shortNmaes);
 
 
-    // REDUCE 
+        //MAP 
 
-    // let arr =['apple', 'pear', 'plum'];
+        // let answers=['IvAn', 'AnnA', 'Hello', ];
+        //  answers = answers.map((item) => {
+        //     return item.toLowerCase();
+        // });
 
-    // let res = arr.reduce((sum, current) => `${sum},  ${current}`, 3);
-    // console.log(res);
+        // console.log(answers);
 
-    // let obj = {
-    //     ivan:'persone',
-    //     ann:'persone',
-    //     dog:'animal',
-    //     cat:'animal',
-    // };
-    // let newArr = Object.entries(obj)
-    // .filter(item => item[1] ==='persone')
-    // .map(item => item[0]);
+        // EVERY/SOME 
+
+        //     let some = [4, 5, 6];
+
+        // // console.log(some.some(item =>  typeof(item) === 'number'));
+        // console.log(some.every(item =>  typeof(item) === 'number'));
 
 
-    // console.log(newArr);
-    fetch('http://localhost:3000/menu')
-        .then(data => data.json())
-        .then(res => console.log(res) );  
+        // REDUCE 
+
+        // let arr =['apple', 'pear', 'plum'];
+
+        // let res = arr.reduce((sum, current) => `${sum},  ${current}`, 3);
+        // console.log(res);
+
+        // let obj = {
+        //     ivan:'persone',
+        //     ann:'persone',
+        //     dog:'animal',
+        //     cat:'animal',
+        // };
+        // let newArr = Object.entries(obj)
+        // .filter(item => item[1] ==='persone')
+        // .map(item => item[0]);
+
+
+        // console.log(newArr);
+        // fetch('http://localhost:3000/menu')
+        //     .then(data => data.json())
+        //     .then(res => console.log(res) );  
 
 }); 
 
