@@ -99,6 +99,7 @@ window.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('show');
         modal.classList.remove('hide');
         document.body.style.overflow = 'hidden';
+        document.body.style.paddingRight = '12px';
         clearInterval(modalTimer);
     }
     modalTrigger.forEach(btn => {
@@ -111,6 +112,8 @@ window.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('hide');
         modal.classList.remove('show');
         document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+
     }
       
     modal.addEventListener('click', (e) => {
@@ -125,9 +128,8 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }); 
     
-    //Modal modify
-
-    let modalTimer = setTimeout(openModal, 50000);
+                             //Modal modify
+        let modalTimer = setTimeout(openModal, 50000, );
 
     function showModalOnScroll(){
         if(window.pageYOffset + document.documentElement.clientHeight >= 
@@ -140,7 +142,6 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', showModalOnScroll);
 
     // Classes for cards!
-
     class MenuCard {
         constructor (src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
@@ -185,7 +186,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
                             // Функция получает по url данные data + показывает ошибку
-    let getResource = async (url, data) => {
+    let getResource = async (url,) => {
         let res = await fetch(url);   
         if( !res.ok){
             throw new Error(`Could not fetch ${url}, status: ${res.status}`);
@@ -196,7 +197,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             // Подключение через axio
     axios.get('http://localhost:3000/menu')
     .then(data => {
-        data.data.forEach(({img, altimg, title, descr, price}) => {
+        data.data.forEach(({img, altimg, title, descr, price }) => {
             new MenuCard(img, altimg, title, descr, price, '.menu .container' ).render();
         });
     });     
@@ -417,47 +418,125 @@ window.addEventListener('DOMContentLoaded', () => {
 
                             //Слайдер 
 
-    let slides = document.querySelectorAll('.offer__slide'),
+    const slides = document.querySelectorAll('.offer__slide'),
         prev = document.querySelector('.offer__slider-prev'),
         next = document.querySelector('.offer__slider-next'),
         total =document.querySelector('#total'),
         current =document.querySelector('#current'),
-        slideIndex = 1;
+                                   
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        slidesField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slidesWrapper).width;
 
-    
-    showSlides(slideIndex);
-    
-    function showSlides (n) {
-        if (n > slides.length){
-            slideIndex =1;
-        }
-        if(n < 1) {
-            slideIndex = slides.length;
-        }
-        slides.forEach(item => item.style.display ='none');
+    let slideIndex = 1,
+        offset =0;    
 
-        slides[slideIndex - 1].style.display = 'block';
 
-        if(slides.length < 10){
-            current.textContent = `0${slideIndex}`;
 
-        }else {
-            current.textContent = slides.length;
-        }
-        
+        // Слайдер по-сложнее 
 
-        
-    }
-     
-    function plusSlides (n){
-        showSlides(slideIndex += n);
-    }
-    prev.addEventListener('click', () => {
-        plusSlides(-1);
-    });
+    //                 Проверяем для индексов  01-09 
+    if(slides.length < 10){
+        total.textContent = `0${slides.length}`;
+        current.textContent =`0${slideIndex}`;
+
+    }else {
+        total.textContent = slides.length;
+        current.textContent = slideIndex;
+    }    
+                        //Увеличели длинну контейнера на длинну width его содержимого
+    slidesField.style.width = 100 * slides.length +'%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+                        //Скрыли выпадающие слайды из контейнера 
+    slidesWrapper.style.overflow = 'hidden';
+
+                        //не понял зачем перебрал 
+    // slides.forEach(slide => {
+    //     slide.style.width = width;
+    // });
+
     next.addEventListener('click', () => {
-        plusSlides(1);
+        if(offset == +width.slice(0, width.length - 2) * (slides.length - 1)){
+            offset = 0;
+        }else{
+            offset += +width.slice(0, width.length -2 );
+        }
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if(slideIndex == slides.length){
+            slideIndex = 1;
+        }else{
+            slideIndex++;
+        }
+
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        }else{
+           current.textContent = slideIndex;
+        }
+        
     });
+
+    prev.addEventListener('click', () => { 
+        if(offset == 0){
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+        }else{
+            offset -= +width.slice(0, width.length -2 );
+        }
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if(slideIndex == 1){
+            slideIndex = slides.length;
+        }else{
+            slideIndex--;
+        }
+
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        }else{
+           current.textContent = slideIndex;
+        }
+    });
+
+
+                    //Простой слайдер 
+
+    // showSlides(slideIndex);
+    
+    // function showSlides (n) {
+    //     if (n > slides.length){
+    //         slideIndex =1;
+    //     }
+    //     if(n < 1) {
+    //         slideIndex = slides.length;
+    //     }
+    //     slides.forEach(item => item.style.display ='none');
+
+    //     slides[slideIndex - 1].style.display = 'block';
+
+    //     if(slides.length < 10){
+    //         current.textContent = `0${slideIndex}`;
+
+    //     }else {
+    //         current.textContent = slides.length;
+    //     }
+        
+
+        
+    // }
+     
+    // function plusSlides (n){
+    //     showSlides(slideIndex += n);
+    // }
+    // prev.addEventListener('click', () => {
+    //     plusSlides(-1);
+    // });
+    // next.addEventListener('click', () => {
+    //     plusSlides(1);
+    // });
+                        
+
 
 }); 
 
