@@ -1,3 +1,5 @@
+import {getResource} from './services/services';
+
 function cards () {
     // Classes for cards!
     class MenuCard {
@@ -43,15 +45,7 @@ function cards () {
 
         }
     }
-                            // Функция получает по url данные data + показывает ошибку
-    let getResource = async (url,) => {
-        let res = await fetch(url);   
-        if( !res.ok){
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-        }
 
-        return await res.json();
-    };
                             // Подключение через axio
     axios.get('http://localhost:3000/menu')
     .then(data => {
@@ -61,4 +55,4 @@ function cards () {
     });   
 }
 
-module.exports = cards;
+export default cards;

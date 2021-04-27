@@ -1,8 +1,4 @@
-function timer () {
-    // Timer
-
-    let deadLine = '2021-04-31';
-
+function timer (id, deadLine) {
     function getTimeRemaining (endtime){
         let t = Date.parse(endtime) - Date.parse(new Date()),
             days = Math.floor(t/(1000*60*60*24)),
@@ -51,7 +47,7 @@ function timer () {
         }    
     }
 
-    setClock('.timer', deadLine);
+    setClock(id, deadLine);
 }
 
-module.exports = timer;
+export default timer;

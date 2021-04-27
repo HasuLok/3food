@@ -1,21 +1,16 @@
-function slider () {
-    const slides = document.querySelectorAll('.offer__slide'),
-    prev = document.querySelector('.offer__slider-prev'),
-    next = document.querySelector('.offer__slider-next'),
-    total =document.querySelector('#total'),
-    current =document.querySelector('#current'),
-    slider = document.querySelector('.offer__slider'),
-    slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-    slidesField = document.querySelector('.offer__slider-inner'),
+function slider ({container, slide, nextArrow, prewArrow, totalCounter, currentCounter, wrapper, field}) {
+    const slides = document.querySelectorAll(slide),
+    prev = document.querySelector(prewArrow),
+    next = document.querySelector(nextArrow),
+    total =document.querySelector(totalCounter),
+    current =document.querySelector(currentCounter),
+    slider = document.querySelector(container),
+    slidesWrapper = document.querySelector(wrapper),
+    slidesField = document.querySelector(field),
     width = window.getComputedStyle(slidesWrapper).width;
 
 let slideIndex = 1,
     offset =0;    
-
-
-
-    // Слайдер по-сложнее 
-
 //                 Проверяем для индексов  01-09 
 if(slides.length < 10){
     total.textContent = `0${slides.length}`;
@@ -92,10 +87,8 @@ function dotToggler () {
 
 function deleteWords (item) {
     return +item.replace(/\D/g, '');
-}
-    
-            
-
+}   
+  
 next.addEventListener('click', () => {
     if(offset == deleteWords(width)  * (slides.length - 1)){
         offset = 0;
@@ -175,4 +168,4 @@ dots.forEach(dot => {
 });
 }
 
-module.exports = slider;
+export default slider;
