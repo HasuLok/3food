@@ -1,3 +1,6 @@
+require('es6-promise').polyfill(); // починил слайдер в m.edge 
+import 'nodelist-foreach-polyfill';
+
 import tabs from './modules/tabs';
 import modals from './modules/modals';
 import timer from './modules/timer';
